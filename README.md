@@ -1,7 +1,6 @@
 # Connect4-WPF
 Connect4 WPF Game
 
-Connect4 WPF Game
 ORM  @ https://github.com/Caliburn-Micro/Caliburn.Micro
 DATABASE  MSSQL
 MVVM FRAMEWORK @ https://github.com/Caliburn-Micro/Caliburn.Micro
