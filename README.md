@@ -2,11 +2,11 @@
 Connect4 WPF Game
 
 <div>
-ORM  @ https://github.com/Caliburn-Micro/Caliburn.Micro
+ORM  @ https://github.com/DapperLib/Dapper
 </div>
 
 <div>
-DATABASE  MSSQL
+DATABASE  MSSQL You can change it to use and Database of your choice. if setting up with MSSQL remeber to modify the connectionStrings
 </div>
 
 <div>
