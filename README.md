@@ -1,6 +1,11 @@
 # Connect4-WPF
 Connect4 WPF Game
 
+Connect4 WPF Game
+ORM  @ https://github.com/Caliburn-Micro/Caliburn.Micro
+DATABASE  MSSQL
+MVVM FRAMEWORK @ https://github.com/Caliburn-Micro/Caliburn.Micro
+
 <h3>SplashScreen</h3>
 <div align="middle">
 <img src="Connect4Project/ProjectImages/Image1.png" width=50%> </img>
