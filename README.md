@@ -6,7 +6,7 @@ ORM  @ https://github.com/DapperLib/Dapper
 </div>
 
 <div>
-DATABASE  MSSQL You can change it to use and Database of your choice. if setting up with MSSQL remeber to modify the connectionStrings
+DATABASE  MSSQL. You can change it to use any Database of your choice. if setting up with MSSQL remeber to modify the connectionStrings
 </div>
 
 <div>
