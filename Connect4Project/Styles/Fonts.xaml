@@ -1,0 +1,40 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Connect4Project.Styles"
+    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <FontFamily x:Key="LatoRegular">
+        pack://application,,,/fonts/#Lato Regular
+    </FontFamily>
+
+
+    <FontFamily x:Key="LatoBold">
+        pack://appllication,,,/Fonts/#Lato Bold
+    </FontFamily>
+
+    <FontFamily x:Key="Handlee">
+        pack://appllication,,,/Fonts/#Indie Flower
+    </FontFamily>
+
+    <FontFamily x:Key="LatoThin">
+        pack://appllication,,,/Fonts/#Lato Thin
+    </FontFamily>
+
+    <Style x:Key="BaseStyle" TargetType="{x:Type Control}">
+
+        <Setter Property="FontFamily" Value="{StaticResource LatoThin}" />
+
+    </Style>
+
+    <Style x:Key="BaseTextBlockStyle" TargetType="{x:Type TextBlock}">
+
+        <Setter Property="FontFamily" Value="{StaticResource LatoThin}" />
+
+    </Style>
+
+    <system:Double x:Key="FontSizeRegular">20</system:Double>
+    <system:Double x:Key="FontSizeSmall">14</system:Double>
+    <system:Double x:Key="FontSizeLarge">30</system:Double>
+
+</ResourceDictionary>

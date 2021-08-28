@@ -1,0 +1,70 @@
+﻿<UserControl
+    x:Class="Connect4Project.Views.RegisterView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Connect4Project.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="650"
+    d:DesignWidth="650"
+    mc:Ignorable="d">
+
+    <Grid
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        TextBlock.TextAlignment="Center">
+
+        <Border
+            x:Name="FormContainer"
+            Width="350"
+            Margin="50,20,50,0"
+            Padding="15,20,15,15"
+            Background="{StaticResource ForegroundLightBrush}"
+            CornerRadius="10">
+
+            <StackPanel>
+
+                <TextBlock
+                    Margin="10,0,10,10"
+                    FontFamily="{StaticResource LatoRegular}"
+                    FontSize="{StaticResource FontSizeLarge}"
+                    FontWeight="Bold"
+                    Foreground="{StaticResource WorldBlueBrush}"
+                    Text="Input Details" />
+
+                <TextBox
+                    x:Name="FirstName"
+                    Margin="0,0,0,10"
+                    Tag="FirstName" />
+
+                <TextBox
+                    x:Name="LastName"
+                    Margin="0,0,0,10"
+                    Tag="LastName" />
+
+                <TextBox
+                    x:Name="Email"
+                    Margin="0,0,0,10"
+                    Tag="Email" />
+
+                <TextBox
+                    x:Name="Username"
+                    Margin="0,0,0,10"
+                    Tag="Username" />
+
+                <TextBox
+                    x:Name="Country"
+                    Margin="0,0,0,30"
+                    Tag="Country" />
+
+                <Button
+                    x:Name="Register"
+                    HorizontalAlignment="Center"
+                    Content="Register" />
+
+            </StackPanel>
+
+        </Border>
+
+    </Grid>
+</UserControl>
