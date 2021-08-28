@@ -6,6 +6,11 @@ Connect4 WPF Game
 <img src="Connect4Project/ProjectImages/Image1.png" width=50%> </img>
 </div>
 
+<h3>HomeScreen</h3>
+<div align="middle">
+<img src="Connect4Project/ProjectImages/Image7.png" width=50%> </img>
+</div>
+
 <h3>LeaderBoard</h3>
 <div align="middle">
 <img src="Connect4Project/ProjectImages/Image2.png" width=50%> </img>
