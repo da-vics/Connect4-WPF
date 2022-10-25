@@ -32,20 +32,6 @@
                     Foreground="{StaticResource WorldBlueBrush}"
                     Text="Input Details" />
 
-                <TextBox
-                    x:Name="FirstName"
-                    Margin="0,0,0,10"
-                    Tag="FirstName" />
-
-                <TextBox
-                    x:Name="LastName"
-                    Margin="0,0,0,10"
-                    Tag="LastName" />
-
-                <TextBox
-                    x:Name="Email"
-                    Margin="0,0,0,10"
-                    Tag="Email" />
 
                 <TextBox
                     x:Name="Username"

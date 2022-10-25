@@ -8,10 +8,9 @@
     Width="800"
     Height="450"
     AllowsTransparency="True"
-    Background="#5c5c5c"
+    Background="Transparent"
     BorderBrush="Transparent"
     Opacity="0.9"
-    OpacityMask="White"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     WindowStartupLocation="CenterScreen"
@@ -20,67 +19,61 @@
 
     <WindowChrome.WindowChrome>
         <WindowChrome
-            CornerRadius="20"
+            CornerRadius="10"
             GlassFrameThickness="6"
             ResizeBorderThickness="6" />
     </WindowChrome.WindowChrome>
 
-    <Grid>
+    <Border
+        Padding="10"
+        Background="#5c5c5c"
+        CornerRadius="10">
 
-        <Grid.Background>
-            <ImageBrush
-                ImageSource="/Connect4Project;component/Images/emoji-background.png"
-                TileMode="Tile"
-                Viewport="0 0 400 400 "
-                ViewportUnits="Absolute" />
-        </Grid.Background>
+        <Grid>
 
-        <Grid.RowDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <Grid.Background>
+                <ImageBrush
+                    ImageSource="../Images/emoji-background.png"
+                    TileMode="Tile"
+                    Viewport="0 0 400 400 "
+                    ViewportUnits="Absolute" />
+            </Grid.Background>
 
-        </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                Margin="35"
+                Padding="10"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontFamily="{StaticResource LatoBold}"
+                FontSize="40"
+                FontWeight="Bold">
+                <Run Foreground="White" Text="C" />
+                <Run Foreground="Red" Text="O" />
+                <Run Foreground="Yellow" Text="O" />
+                <Run Foreground="White" Text="N" />
+                <Run Foreground="White" Text="N" />
+                <Run Foreground="White" Text="E" />
+                <Run Foreground="White" Text="C" />
+                <Run Foreground="White" Text="T" />
+                <Run Foreground="White" Text="4" />
 
-        <TextBlock
-            Grid.Row="0"
-            Margin="35"
-            Padding="10"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            FontFamily="{StaticResource LatoBold}"
-            FontSize="40"
-            FontWeight="Bold">
-            <Run Foreground="White" Text="C" />
-            <Run Foreground="Red" Text="O" />
-            <Run Foreground="Yellow" Text="O" />
-            <Run Foreground="White" Text="N" />
-            <Run Foreground="White" Text="N" />
-            <Run Foreground="White" Text="E" />
-            <Run Foreground="White" Text="C" />
-            <Run Foreground="White" Text="T" />
-            <Run Foreground="White" Text="4" />
+            </TextBlock>
 
-        </TextBlock>
+            <Image
+                Grid.Row="1"
+                Width="170"
+                Margin="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Source="../Images/connect4.ico" />
 
-        <Image
-            Grid.Row="1"
-            Width="170"
-            Margin="0"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Source="/Connect4Project;component/Images/connect4.ico" />
 
-        <TextBlock
-            Grid.Row="2"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            FontFamily="{StaticResource LatoBold}"
-            FontSize="40"
-            FontWeight="Bold"
-            Foreground="White"
-            Text="BY: DAVICS" />
-
-    </Grid>
+        </Grid>
+    </Border>
 </Window>

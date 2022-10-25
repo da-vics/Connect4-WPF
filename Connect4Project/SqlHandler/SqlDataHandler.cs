@@ -1,24 +1,32 @@
 ﻿using Connect4Project.SqlHandler.DataModels;
 using System;
 using Dapper;
-using System.Configuration;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Connect4Project.Models;
 using System.Collections.ObjectModel;
 using System.Data.SqlClient;
+using System.IO;
+using System.Data.SQLite;
 
 namespace Connect4Project.SqlHandler
 {
     class SqlDataHandler
     {
-        string connectionString { get; set; }
+        public string baseDirectory = Environment.ExpandEnvironmentVariables(@"%LOCALAPPDATA%");
+        private string connectionString;
+        private string dbPath;
 
         public SqlDataHandler()
         {
-            connectionString = ConfigurationManager.ConnectionStrings["TestDB"].ConnectionString; // set Connection String in App.config
+            baseDirectory = Path.Combine(baseDirectory, "Connect4");
+
+            if (!Directory.Exists(baseDirectory))
+                Directory.CreateDirectory(baseDirectory);
+
+            dbPath = Path.Combine(baseDirectory, "access.db");
+            connectionString = $"Data Source={dbPath}; Version=3;";
             CreateTables();
         }
 
@@ -26,71 +34,35 @@ namespace Connect4Project.SqlHandler
 
         private void CreateTables()
         {
-            if (string.IsNullOrEmpty(connectionString))
-                return;
-
-            var sqlConnection = new SqlConnection(connectionString);
-
-            try
-            {
-                if (sqlConnection.State != ConnectionState.Open)
-                    sqlConnection.Open();
-            }
-
-            catch (Exception err)
-            {
-                Console.WriteLine(err.Message);
-            }
-
             string sqlQuery = @"
-
              	
-            IF OBJECT_ID('dbo.UserInfo', 'U') IS NULL CREATE TABLE dbo.UserInfo (
-                    id int identity(1,1) PRIMARY KEY,
-                    firstname varchar(100) NOT NULL,
-                    lastname varchar(100) NOT NULL,
-                    email varchar(100) NOT NULL UNIQUE,
-                    username varchar(100) NOT NULL UNIQUE,
-                    country TEXT NOT NULL
+            CREATE TABLE IF NOT EXISTS UserInfo (
+                    id INTEGER,
+                    username VARCHAR(100) NOT NULL UNIQUE,
+                    country TEXT NOT NULL,
+                    PRIMARY KEY(id AUTOINCREMENT)
                 );
 
 
-            IF OBJECT_ID('dbo.Highscores', 'U') IS NULL CREATE TABLE  dbo.Highscores (
-                    id int identity(1,1) PRIMARY KEY ,
-                    username varchar(100) NOT NULL,
+            CREATE TABLE IF NOT EXISTS Highscores (
+                    id INTEGER,
+                    username VARCHAR(100) NOT NULL,
                     highscore INT,
-                    FOREIGN KEY (username) references userinfo(username) ON DELETE CASCADE
+                    PRIMARY KEY(id AUTOINCREMENT),
+                    FOREIGN KEY (username) references UserInfo(username) ON DELETE CASCADE
                 );
 
-            IF OBJECT_ID('dbo.GameSatistics', 'U') IS NULL CREATE TABLE  dbo.GameSatistics (
-                    id int identity(1,1) PRIMARY KEY,
-                    username varchar(100) NOT NULL,
+            CREATE TABLE IF NOT EXISTS GameSatistics (
+                    id INTEGER,
+                    username VARCHAR(100) NOT NULL,
                     wins INT,
                     losses INT,
-                    FOREIGN KEY (username) references userinfo(username) ON DELETE CASCADE
+                    PRIMARY KEY(id AUTOINCREMENT),
+                    FOREIGN KEY (username) references UserInfo(username) ON DELETE CASCADE
                 );";
 
-
-            var sqlCommand = new SqlCommand(sqlQuery, sqlConnection);
-
-            Task.Run(async () =>
-            {
-                try
-                {
-                    await sqlCommand.ExecuteNonQueryAsync();
-                }
-
-                catch (Exception err)
-                {
-                    Console.WriteLine(err.Message);
-                }
-
-                finally
-                {
-                    sqlConnection.Close();
-                }
-
-            });
+            using (IDbConnection connection = new SQLiteConnection(connectionString))
+                connection.Execute(sqlQuery);
         }
 
         #endregion
@@ -100,25 +72,14 @@ namespace Connect4Project.SqlHandler
 
         public void RegisterUser(UserInfo userInfo)
         {
-            if (string.IsNullOrEmpty(connectionString))
-                return;
+            if (VerifyUser(userInfo.username))
+                throw new Exception("User name exist");
 
-            using (IDbConnection connection = new SqlConnection(connectionString))
+            using (IDbConnection connection = new SQLiteConnection(connectionString))
             {
-                string sqlQuery = @"
-                                    INSERT INTO dbo.userinfo
-                                        (firstname,
-                                         lastname,
-                                         email,
-                                         username,
-                                         country)
-                                    VALUES
-                                        (@firstname,@lastname,
-                                        @email,@username,@country);
-                                    ";
                 try
                 {
-                    connection.Execute(sqlQuery, userInfo);
+                    connection.Execute("INSERT INTO UserInfo (username,country) VALUES(@username,@country)", userInfo);
                     connection.Execute($"insert into Highscores(username,highscore) values('{userInfo.username}',0)");
                     connection.Execute($"insert into GameSatistics(username,wins,losses) values('{userInfo.username}',0,0)");
                 }
@@ -139,24 +100,28 @@ namespace Connect4Project.SqlHandler
             if (string.IsNullOrEmpty(connectionString))
                 throw new Exception("ConnectionString Invalid");
 
-            bool verified = false;
-
-            using (IDbConnection connection = new SqlConnection(connectionString))
+            using (IDbConnection connection = new SQLiteConnection(connectionString))
             {
                 try
                 {
-                    var result = connection.Query<string>($"select username from dbo.userinfo where username = '{userName}';").ToList<string>();
+                    var result = connection.Query<string>($"select username from UserInfo where username = '{userName}';").ToList<string>();
                     if (result.Count > 0)
-                        verified = true;
+                        return true;
+
+                    else
+                        return false;
                 }
                 catch (Exception err)
                 {
                     throw err;
                 }
             }
-
-            return verified;
         }
+
+        #endregion
+
+        #region
+
 
         #endregion
 
@@ -165,35 +130,32 @@ namespace Connect4Project.SqlHandler
 
         public void UpdatePlayerStats(string playerWon, string playerLost, int winnerpoints)
         {
-            if (string.IsNullOrEmpty(connectionString))
-                return;
-
             Task.Run(async () =>
-            {
-                using (IDbConnection connection = new SqlConnection(connectionString))
-                {
-                    try
-                    {
-                        var winnerPoint = await connection.QueryFirstOrDefaultAsync<int>($"select highscore from dbo.highscores where username = '{playerWon}';");
-                        winnerPoint += winnerpoints;
-                        connection.Execute($"update dbo.highscores set highscore = '{winnerPoint}' where username = '{playerWon}'");
+          {
+              using (IDbConnection connection = new SQLiteConnection(connectionString))
+              {
+                  try
+                  {
+                      var winnerPoint = await connection.QueryFirstOrDefaultAsync<int>($"select highscore from Highscores where username = '{playerWon}';");
+                      winnerPoint += winnerpoints;
+                      connection.Execute($"update Highscores set highscore = '{winnerPoint}' where username = '{playerWon}'");
 
-                        var winnerWinCount = await connection.QueryFirstOrDefaultAsync<int>($"select wins from gamesatistics where username = '{playerWon}';");
-                        winnerWinCount += 1;
-                        connection.Execute($"update dbo.gamesatistics set wins = '{winnerWinCount}' where username = '{playerWon}'");
+                      var winnerWinCount = await connection.QueryFirstOrDefaultAsync<int>($"select wins from GameSatistics where username = '{playerWon}';");
+                      winnerWinCount += 1;
+                      connection.Execute($"update GameSatistics set wins = '{winnerWinCount}' where username = '{playerWon}'");
 
-                        var losserCount = await connection.QueryFirstOrDefaultAsync<int>($"select losses from gamesatistics where username = '{playerLost}';");
-                        losserCount += 1;
-                        connection.Execute($"update dbo.gamesatistics set losses = '{losserCount}' where username = '{playerLost}'");
+                      var losserCount = await connection.QueryFirstOrDefaultAsync<int>($"select losses from GameSatistics where username = '{playerLost}';");
+                      losserCount += 1;
+                      connection.Execute($"update GameSatistics set losses = '{losserCount}' where username = '{playerLost}'");
 
-                    }
-                    catch (Exception err)
-                    {
-                        Console.WriteLine(err.Message);
-                    }
-                }
+                  }
+                  catch (Exception err)
+                  {
+                      Console.WriteLine(err.Message);
+                  }
+              }
 
-            });
+          });
         }
 
         #endregion
@@ -208,11 +170,11 @@ namespace Connect4Project.SqlHandler
             if (string.IsNullOrEmpty(connectionString))
                 return stats;
 
-            using (IDbConnection connection = new SqlConnection(connectionString))
+            using (IDbConnection connection = new SQLiteConnection(connectionString))
             {
                 try
                 {
-                    var result = connection.Query<PlayerStats>("select username, highscore from dbo.highscores order by highscore desc;").ToList<PlayerStats>();
+                    var result = connection.Query<PlayerStats>("select username, highscore from Highscores order by highscore desc;").ToList<PlayerStats>();
                     stats = new ObservableCollection<PlayerStats>(result);
 
                 }
@@ -232,25 +194,20 @@ namespace Connect4Project.SqlHandler
 
         public void DeleteUser(string username)
         {
-            if (string.IsNullOrEmpty(connectionString))
-                return;
-
-            using (IDbConnection connection = new SqlConnection(connectionString))
+            using (IDbConnection connection = new SQLiteConnection(connectionString))
             {
                 try
                 {
-                    connection.Execute($"delete from dbo.userinfo where username = '{username}';");
+                    connection.Execute($"delete from UserInfo where username = '{username}';");
+                    connection.Execute($"delete from Highscores where username = '{username}';");
+                    connection.Execute($"delete from GameSatistics where username = '{username}';");
                 }
                 catch (Exception err)
                 {
                     Console.WriteLine(err.Message);
                 }
             }
-
-
         }
-
-
         #endregion
 
     }

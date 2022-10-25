@@ -1,8 +1,6 @@
 ﻿using Caliburn.Micro;
 using Connect4Project.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -20,7 +18,7 @@ namespace Connect4Project
 
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 5);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 2);
             dispatcherTimer.Tick += OnTimedEvent;
             dispatcherTimer.Start();
             WindowManager windowManager = new WindowManager();
@@ -31,7 +29,7 @@ namespace Connect4Project
         {
             dispatcherTimer.Stop();
             splashScreen.TryCloseAsync();
-            DisplayRootViewFor<ShellViewModel>();
+            DisplayRootViewForAsync<ShellViewModel>();
         }
     }
 }
